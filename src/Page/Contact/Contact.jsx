@@ -1,45 +1,48 @@
 const Contact = () => {
     return (
-        <div className="bg-black min-h-screen flex items-center justify-center px-4 rounded-2xl mb-10">
-            <form className="w-full max-w-md bg-gray-100 p-6 rounded-lg shadow-md space-y-4">
-                <h2 className="text-2xl font-semibold text-gray-800">Contact Us</h2>
+        <div className="w-full min-h-screen flex items-center justify-center py-12 px-4 md:px-8 lg:px-16">
+            <form className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-2xl">
+                <h2 className="text-4xl font-bold text-white mb-2 text-center">Contact Us</h2>
+                <p className="text-gray-300 text-center mb-8">We'd love to hear from you!</p>
 
-                <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-                    <input
-                        id="name"
-                        type="text"
-                        placeholder="Enter your name"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                <div className="space-y-5">
+                    <div>
+                        <label htmlFor="name" className="block text-white font-semibold mb-2">Name</label>
+                        <input
+                            id="name"
+                            type="text"
+                            placeholder="Enter your name"
+                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="email" className="block text-white font-semibold mb-2">E-mail</label>
+                        <input
+                            id="email"
+                            type="email"
+                            placeholder="Enter your email"
+                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="phone" className="block text-white font-semibold mb-2">Phone Number</label>
+                        <input
+                            id="phone"
+                            type="tel"
+                            placeholder="Enter your phone number"
+                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full py-4 bg-gradient-to-r from-[#2EC1DB] to-sky-500 text-white font-bold rounded-lg hover:shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-[1.02]"
+                    >
+                        Submit
+                    </button>
                 </div>
-
-                <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">E-mail</label>
-                    <input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                    <input
-                        id="phone"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-                >
-                    Submit
-                </button>
             </form>
         </div>
     );

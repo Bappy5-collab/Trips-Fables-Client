@@ -41,124 +41,157 @@ const MyProfile = () => {
   };
 
   return (
-    <div className="w-[800px] flex justify-center mx-auto">
-      <div className="pt-7 mb-7">
-        <div className="flex items-center gap-2 mb-10">
-        <div><img className="h-[100px] w-[100px] rounded-full mx-auto" src={user?.photoURL} alt="" /></div>
-        <div>
-          <h2 className="text-xl font-bold">
-            <span className="text-[#64A893]">Name:</span> {user?.displayName}
+    <div className="min-h-screen w-full">
+      <div className="w-full px-6 lg:px-8 py-8 flex justify-center">
+        <div className="w-full max-w-4xl">
+          {/* Header */}
+          <div className="mb-8">
+          <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#2EC1DB] to-sky-500/30 mb-2">
+            My Profile
           </h2>
-          <p>
-            <span className="font-bold text-[#64A893]]">Gmail Address</span>: {user?.email}
-          </p>
+          <p className="text-gray-600">Manage your profile and share your travel stories</p>
         </div>
-        </div>
-        <div className="pt-15 border-2 p-4 bg-white text-[#64A893] rounded-md shadow-2xl ">
-          <h1>Fillup this form and share your story</h1>
 
-          <div className="pt-10 flex ">
-            <form onSubmit={handleStory}>
-             <div className="flex gap-4 ">
-             <div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Tour Type</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Tour Type"
-                    className="border-2 p-2"
-                    required
-                    name="tourType"
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Date</span>
-                  </label>
-                  <input
-                    type="date"
-                    className="border-2 p-2"
-                    required
-                    name="date"
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Name</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter Your Name"
-                    className="border-2 p-2"
-                    required
-                    defaultValue={user.displayName}
-                  
-                    name="name"
-                  />
-                </div>
-               
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">E-mail</span>
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="Enter Your E-mail"
-                    className="border-2 p-2"
-                    required
-                    defaultValue={user.email}
-                    readOnly
-                    name="email"
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Give Rateing</span>
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="Rate"
-                    className="border-2 p-2"
-                    required
-                    name="Rate"
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Write Your Story</span>
-                  </label>
-                  <textarea
-                    className="border-2 h-[364px]"
-                    name="story"
-                    cols="30"
-                    rows="10"
-                  ></textarea>
-                </div>
-             </div>   
-              </div>
-              <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Photo URL</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Photo URL"
-                    className="border-2 p-2"
-                    required
-                    name="photo"
-                  />
-                </div>
-              <div className="form-control mt-6">
-                  <button className="p-2 border-2 bg-[#2EC1DB] text-black shadow-2xl">
-                    Add Story
-                  </button>
-                </div>
-            </form>
+        {/* User Info Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-100">
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              <img 
+                className="h-24 w-24 rounded-full ring-4 ring-[#2EC1DB] ring-opacity-20" 
+                src={user?.photoURL} 
+                alt="Profile" 
+              />
+              <div className="absolute bottom-0 right-0 h-8 w-8 bg-green-500 rounded-full border-4 border-white"></div>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                {user?.displayName}
+              </h2>
+              <p className="text-gray-600 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                </svg>
+                {user?.email}
+              </p>
+            </div>
           </div>
+        </div>
+
+        {/* Story Form Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="mb-6">
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Share Your Story</h3>
+            <p className="text-gray-600">Tell us about your amazing travel experience</p>
+          </div>
+
+          <form onSubmit={handleStory} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Tour Type
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Adventure, Cultural, Beach"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all duration-200"
+                  required
+                  name="tourType"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Date
+                </label>
+                <input
+                  type="date"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all duration-200"
+                  required
+                  name="date"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Your Name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter Your Name"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all duration-200"
+                required
+                defaultValue={user.displayName}
+                name="name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                placeholder="Enter Your E-mail"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                required
+                defaultValue={user.email}
+                readOnly
+                name="email"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Rating
+              </label>
+              <input
+                type="number"
+                placeholder="Rate from 1 to 5"
+                min="1"
+                max="5"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all duration-200"
+                required
+                name="Rate"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Photo URL
+              </label>
+              <input
+                type="text"
+                placeholder="https://example.com/photo.jpg"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all duration-200"
+                required
+                name="photo"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Write Your Story
+              </label>
+              <textarea
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2EC1DB] focus:border-transparent transition-all duration-200 resize-none"
+                name="story"
+                rows="6"
+                placeholder="Share your amazing travel experience..."
+              ></textarea>
+            </div>
+
+            <div className="pt-4">
+              <button 
+                type="submit"
+                className="w-full bg-gradient-to-r from-[#2EC1DB] to-sky-500 text-white font-semibold py-4 rounded-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+              >
+                Submit Your Story
+              </button>
+            </div>
+          </form>
+        </div>
         </div>
       </div>
     </div>

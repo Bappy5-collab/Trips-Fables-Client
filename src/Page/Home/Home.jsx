@@ -5,13 +5,13 @@ import TouristStory from "../TouristStory/TouristStory";
 
 const Home = () => {
     return (
-        <div>
+        <div className="w-full">
             <Banner></Banner>
-            <Tourism></Tourism>
-            <TourType></TourType>
-            <TouristStory></TouristStory>
-            
-           
+            <div className="w-full px-4 md:px-8 lg:px-16">
+                <Tourism></Tourism>
+                <TourType></TourType>
+                <TouristStory></TouristStory>
+            </div>
         </div>
     );
 };

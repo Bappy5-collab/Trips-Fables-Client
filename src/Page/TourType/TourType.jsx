@@ -13,17 +13,13 @@ const TourType = () => {
   },[])
     return (
         <div className="mb-36">
-           <h2 className="text-center font-bold text-xl md:text-3xl lg:text-5xl mb-24">
-          Tour <span className="text-[#2EC1DB]">Type</span>
-        </h2>
-          <div className='grid md:grid-cols-2 lg:grid-cols-4  gap-3 pt-10 mx-auto'>
-          {
-            types.map(type =><TypeData key={type._id} type={type}></TypeData>)
-          }
+          <h2 className="text-center font-bold text-white text-xl md:text-3xl lg:text-5xl mb-12">
+            Tour <span className="text-[#2EC1DB]">Type</span>
+          </h2>
+          <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6 py-8'>
+            {types.map(type => <TypeData key={type._id} type={type}></TypeData>)}
           </div>
-       </div>
-        
-      
+        </div>
     );
 };
 

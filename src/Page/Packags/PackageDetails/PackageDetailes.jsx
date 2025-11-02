@@ -9,10 +9,8 @@ const PackageDetailes = () => {
   const packags = packageItems?.find((item) => item._id === _id);
 
   return (
-    <div className="">
-      <div className="mb-12">
-        <PackageDetailesCart packags={packags}></PackageDetailesCart>
-      </div> 
+    <div className="w-full min-h-screen py-8 px-4 md:px-8 lg:px-16">
+      <PackageDetailesCart packags={packags}></PackageDetailesCart>
     </div>
   );
 };
