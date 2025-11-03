@@ -1,24 +1,27 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../../Authprovider/Authprovider";
 
 import Swal from "sweetalert2";
 import axios from "axios";
 import UserAxioxPublic from "../Hooks/UserAxioxPublic";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import uploadImageToImgBB from "../Hooks/useImgBB";
 
 const Signup = () => {
   const { createUser, updateUserProfile } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const from = location.state?.from?.pathname || "/";
   const [signError, setSignError] = useState('');
   const axiosPublic = UserAxioxPublic();
 
-  // Handle file selection and convert to base64
+  // Handle file selection and create preview
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -27,11 +30,13 @@ const Signup = () => {
         setSignError('Please select a valid image file');
         return;
       }
-      // Validate file size (max 2MB for base64)
-      if (file.size > 2 * 1024 * 1024) {
-        setSignError('Image size should be less than 2MB');
+      // Validate file size (max 32MB for ImgBB)
+      if (file.size > 32 * 1024 * 1024) {
+        setSignError('Image size should be less than 32MB');
         return;
       }
+      // Store the file object
+      setSelectedFile(file);
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -40,6 +45,11 @@ const Signup = () => {
       reader.readAsDataURL(file);
       setSignError('');
     }
+  };
+
+  // Upload image to ImgBB and get download URL
+  const handleImageUpload = async (file) => {
+    return await uploadImageToImgBB(file);
   };
   
   const handleSignup = async (event) => {
@@ -62,7 +72,7 @@ const Signup = () => {
       return
     }
 
-    if (!photoPreview) {
+    if (!selectedFile) {
       setSignError('Please upload a profile photo');
       return;
     }
@@ -71,19 +81,57 @@ const Signup = () => {
     setUploading(true);
 
     try {
-      // Use base64 photo directly (since photoPreview is already base64)
-      const photoUrl = photoPreview;
+      // Step 1: Upload image to ImgBB first
+      let photoUrl;
+      try {
+        photoUrl = await handleImageUpload(selectedFile);
+        console.log('Image uploaded successfully to ImgBB:', photoUrl.substring(0, 50) + '...');
+      } catch (uploadError) {
+        setUploading(false);
+        console.error('Image upload error:', uploadError);
+        setSignError(`Image upload failed: ${uploadError.message || 'Please try again'}`);
+        return;
+      }
+      
+      // Validate URL length for Firebase Auth (max 2048 chars)
+      if (photoUrl && photoUrl.length > 2048) {
+        console.warn('Photo URL is too long for Firebase Auth:', photoUrl.length);
+        // Continue anyway - will skip Firebase Auth photoURL update
+      }
 
       const userInfo = { name, email, password, photo: photoUrl };
 
-      // Create user with Firebase
-      const result = await createUser(email, password);
+      // Step 2: Create user with Firebase
+      let result;
+      try {
+        result = await createUser(email, password);
+      } catch (authError) {
+        setUploading(false);
+        console.error('Firebase Auth error:', authError);
+        setSignError(authError.message || 'Failed to create user account. Please try again.');
+        return;
+      }
       
-      // Update user profile
-      await updateUserProfile(name, photoUrl);
+      // Step 3: Update user profile with the ImgBB URL (will skip if URL is too long)
+      try {
+        await updateUserProfile(name, photoUrl);
+        console.log('Profile updated successfully');
+      } catch (profileError) {
+        // If profile update fails, log but continue (photo is saved in database)
+        console.warn('Profile photo update failed, but user was created:', profileError.message);
+        // Still continue - user is created and photo is in database
+      }
       
-      // Save user to database
-      await axiosPublic.post('/users', userInfo);
+      // Step 4: Save user to database (photo URL is always saved here)
+      try {
+        await axiosPublic.post('/users', userInfo);
+        console.log('User saved to database successfully');
+      } catch (dbError) {
+        setUploading(false);
+        console.error('Database error:', dbError);
+        setSignError('Failed to save user data. Please try again.');
+        return;
+      }
       
       setUploading(false);
       Swal.fire({

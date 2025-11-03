@@ -58,7 +58,7 @@ const MyProfile = () => {
             <div className="relative">
               <img 
                 className="h-24 w-24 rounded-full ring-4 ring-[#2EC1DB] ring-opacity-20" 
-                src={user?.photoURL} 
+                src={user?.photoURL || user?.dbPhoto || "https://cdn-icons-png.flaticon.com/512/4140/4140048.png"} 
                 alt="Profile" 
               />
               <div className="absolute bottom-0 right-0 h-8 w-8 bg-green-500 rounded-full border-4 border-white"></div>

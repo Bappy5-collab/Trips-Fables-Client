@@ -8,6 +8,7 @@ import UseAuth from "../Hooks/UseAuth";
 import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import userAxioxSecure from "../Hooks/UserAxioxSecure";
+import uploadImageToImgBB from "../Hooks/useImgBB";
 
 
 
@@ -18,6 +19,7 @@ const BookingForm = ({ packags }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const { user } = UseAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,15 +37,18 @@ const BookingForm = ({ packags }) => {
         });
         return;
       }
-      // Max 2MB for base64
-      if (file.size > 2 * 1024 * 1024) {
+      // Max 32MB for ImgBB
+      if (file.size > 32 * 1024 * 1024) {
         Swal.fire({
           icon: 'error',
           title: 'File Too Large',
-          text: 'Image size should be less than 2MB'
+          text: 'Image size should be less than 32MB'
         });
         return;
       }
+      // Store the file object
+      setSelectedFile(file);
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -57,7 +62,7 @@ const BookingForm = ({ packags }) => {
       event.preventDefault();
       const form = event.target;
       
-      if (!imagePreview) {
+      if (!selectedFile) {
         Swal.fire({
           icon: 'warning',
           title: 'Image Required',
@@ -69,8 +74,19 @@ const BookingForm = ({ packags }) => {
       setUploading(true);
 
       try {
-        // Use base64 image
-        const imageUrl = imagePreview;
+        // Upload image to ImgBB
+        let imageUrl;
+        try {
+          imageUrl = await uploadImageToImgBB(selectedFile);
+        } catch (uploadError) {
+          setUploading(false);
+          Swal.fire({
+            icon: 'error',
+            title: 'Image Upload Failed',
+            text: uploadError.message || 'Failed to upload image. Please try again.'
+          });
+          return;
+        }
 
         const name = form.name.value;
         const email = form.email.value;
@@ -95,6 +111,7 @@ const BookingForm = ({ packags }) => {
           // Reset form
           event.target.reset();
           setImagePreview(null);
+          setSelectedFile(null);
         }
       } catch (error) {
         setUploading(false);

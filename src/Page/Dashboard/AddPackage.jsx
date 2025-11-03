@@ -1,11 +1,19 @@
 import Swal from "sweetalert2";
 import { FiPackage, FiImage, FiCalendar, FiDollarSign, FiFileText, FiPlus, FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
+import uploadImageToImgBB from "../Hooks/useImgBB";
 
 const AddPackage = () => {
     const [days, setDays] = useState([{ id: 1, title: '', plan: '' }]);
     const [uploading, setUploading] = useState(false);
     const [imagePreviews, setImagePreviews] = useState({
+        main: null,
+        gallery1: null,
+        gallery2: null,
+        gallery3: null,
+        gallery4: null
+    });
+    const [selectedFiles, setSelectedFiles] = useState({
         main: null,
         gallery1: null,
         gallery2: null,
@@ -35,15 +43,18 @@ const AddPackage = () => {
                 });
                 return;
             }
-            // Max 2MB for base64
-            if (file.size > 2 * 1024 * 1024) {
+            // Max 32MB for ImgBB
+            if (file.size > 32 * 1024 * 1024) {
                 Swal.fire({
                     icon: 'error',
                     title: 'File Too Large',
-                    text: 'Image size should be less than 2MB'
+                    text: 'Image size should be less than 32MB'
                 });
                 return;
             }
+            // Store the file object
+            setSelectedFiles({ ...selectedFiles, [imageKey]: file });
+            // Create preview
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreviews({ ...imagePreviews, [imageKey]: reader.result });
@@ -57,7 +68,7 @@ const AddPackage = () => {
         const form = event.target;
         
         // Check if all images are provided
-        if (!imagePreviews.main || !imagePreviews.gallery1 || !imagePreviews.gallery2 || !imagePreviews.gallery3 || !imagePreviews.gallery4) {
+        if (!selectedFiles.main || !selectedFiles.gallery1 || !selectedFiles.gallery2 || !selectedFiles.gallery3 || !selectedFiles.gallery4) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Missing Images',
@@ -69,12 +80,25 @@ const AddPackage = () => {
         setUploading(true);
 
         try {
-            // Use base64 images from previews
-            const image = imagePreviews.main;
-            const galleryIM1 = imagePreviews.gallery1;
-            const galleryIM2 = imagePreviews.gallery2;
-            const galleryIM3 = imagePreviews.gallery3;
-            const galleryIM4 = imagePreviews.gallery4;
+            // Upload all images to ImgBB
+            let image, galleryIM1, galleryIM2, galleryIM3, galleryIM4;
+            try {
+                [image, galleryIM1, galleryIM2, galleryIM3, galleryIM4] = await Promise.all([
+                    uploadImageToImgBB(selectedFiles.main),
+                    uploadImageToImgBB(selectedFiles.gallery1),
+                    uploadImageToImgBB(selectedFiles.gallery2),
+                    uploadImageToImgBB(selectedFiles.gallery3),
+                    uploadImageToImgBB(selectedFiles.gallery4)
+                ]);
+            } catch (uploadError) {
+                setUploading(false);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Image Upload Failed',
+                    text: uploadError.message || 'Failed to upload one or more images. Please try again.'
+                });
+                return;
+            }
 
             const tourType = form.tourType.value;
             const tripTitle = form.tripTitle.value;
@@ -126,6 +150,13 @@ const AddPackage = () => {
                 // Reset form
                 event.target.reset();
                 setImagePreviews({
+                    main: null,
+                    gallery1: null,
+                    gallery2: null,
+                    gallery3: null,
+                    gallery4: null
+                });
+                setSelectedFiles({
                     main: null,
                     gallery1: null,
                     gallery2: null,
